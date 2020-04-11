@@ -17,7 +17,7 @@ def hello(event, context):
 
 
 def get_word(event, context):
-    return {"statusCode": 200, "body": json.dumps({"message": str(randint(1, 500)), "input": event})}
+    return {"statusCode": 200, "body": json.dumps({"message": str(randint(1, 50)), "input": event})}
 
     # Use this code if you don't use the http event with the LAMBDA-PROXY
     # integration
