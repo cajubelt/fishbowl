@@ -1,4 +1,5 @@
 import json
+from random import random
 
 
 def hello(event, context):
@@ -13,6 +14,10 @@ def hello(event, context):
     }
 
     return response
+
+
+def get_word(event, context):
+    return {"statusCode": 200, "body": json.dumps({"message": str(random.randint(5))})}
 
     # Use this code if you don't use the http event with the LAMBDA-PROXY
     # integration
