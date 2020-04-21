@@ -21,7 +21,9 @@ def hello(event, context):
 
 
 def add_word(event, context):
-    new_word = json.loads(event['body'])
+    print('event type: ' + str(type(event)))
+    print(str(event))
+    new_word = json.loads(event)['body']
 
     words_table.put_item(
         Item={
