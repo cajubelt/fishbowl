@@ -29,13 +29,15 @@ functions:
     handler: handler.hello
   get_word:
     handler: handler.get_word
+  add_word:
+    handler: handler.add_word
 
 resources:
   Resources:
     TestTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: fishbowl-test-table
+        TableName: fishbowl-test-words_table
         AttributeDefinitions:
           -
             AttributeName: id
