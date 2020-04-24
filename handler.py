@@ -27,6 +27,7 @@ def add_word(event, context):
     new_word = event['body']
 
     words_table.put_item(
+        TableName='fishbowl_words',
         Item={
             'id': str(uuid.uuid1()),
             'word': new_word
