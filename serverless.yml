@@ -37,11 +37,11 @@ resources:
     TestTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: fishbowl-test-words_table
+        TableName: fishbowl_words
         AttributeDefinitions:
           -
             AttributeName: id
-            AttributeType: N
+            AttributeType: S
         KeySchema:
           -
             AttributeName: id
