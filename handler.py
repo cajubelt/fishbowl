@@ -24,11 +24,11 @@ def hello(event, context):
 def add_word(event, context):
     print('event type: ' + str(type(event)))
     print(str(event))
-    new_word = json.loads(event)['body']
+    new_word = event['body']
 
     words_table.put_item(
         Item={
-            'id': uuid.uuid1(),
+            'id': str(uuid.uuid1()),
             'word': new_word
         }
     )
