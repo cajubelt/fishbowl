@@ -12,6 +12,9 @@ dynamodb = boto3.resource('dynamodb',
 words_table = dynamodb.Table('fishbowl_words')
 
 
+def say_hello(event, context):
+    return {'statusCode': 200, 'body': json.dumps({'msg': 'hello :)'})}
+
 def add_word(event, context):
     print('event type: ' + str(type(event)))
     print(str(event))
