@@ -25,6 +25,13 @@ provider:
   runtime: python3.8
 
 functions:
+  say_hello_again:
+    handler: handler.say_hello
+    events:
+      - http:
+          path: /say_hello_again
+          method: get
+          cors: true
   say_hello:
     handler: handler.say_hello
     events:
