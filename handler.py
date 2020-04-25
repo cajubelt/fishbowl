@@ -54,6 +54,13 @@ def get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> di
 
 
 def grab_word_from_bowl(event, context):
+    # error out if another word is active
+    existing_active_words = get_words_with_status(in_bowl=False, is_active=True)  # should be singleton
+    if len(existing_active_words) > 0:
+        return {'statusCode': 500,
+                'message': 'Another player has an active word! Please ask the last player to return their word to the' +
+                           ' bowl or report that their team got it.'}
+
     # choose a word
     words_response = get_words_with_status(in_bowl=True)
     response_items = words_response['Items']
@@ -64,11 +71,6 @@ def grab_word_from_bowl(event, context):
     removed_word = random_item['word']
     print('removing ' + removed_word + ' from bowl')
     removed_word_id = random_item['id']
-
-    # set other active word to inactive
-    existing_active_words = get_words_with_status(in_bowl=False, is_active=True)  # should be singleton
-    for item in existing_active_words['Items']:
-        update_word_status(item['id'], in_bowl=False, active=False)
 
     # set newly removed word to active
     update_word_status(removed_word_id, in_bowl=False, active=True)
