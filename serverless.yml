@@ -25,6 +25,8 @@ provider:
   runtime: python3.8
 
 functions:
+  put_all_back_in_bowl:
+    handler: handler.put_all_back_in_bowl
   grab_word_from_bowl:
     handler: handler.grab_word_from_bowl
   add_word:
