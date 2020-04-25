@@ -69,7 +69,7 @@ def update_word_status(word_id: str,
                        active: bool) -> None:
     words_table.update_item(
         Key={'id': word_id},
-        UpdateExpression="set in_bowl = :in, active = :active",
+        UpdateExpression="set in_bowl = :in, is_active = :active",
         ExpressionAttributeValues={
             ':in': in_bowl,
             ':active': active
