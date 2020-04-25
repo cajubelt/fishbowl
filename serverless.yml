@@ -27,19 +27,14 @@ provider:
 functions:
   put_all_back_in_bowl:
     handler: handler.put_all_back_in_bowl
-    cors: true
   grab_word_from_bowl:
     handler: handler.grab_word_from_bowl
-    cors: true
   add_word:
     handler: handler.add_word
-    cors: true
   put_active_word_back_in_bowl:
     handler: handler.put_active_word_back_in_bowl
-    cors: true
   set_active_word_as_inactive:
     handler: handler.set_active_word_as_inactive
-    cors: true
 
 resources:
   Resources:
