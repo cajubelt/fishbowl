@@ -101,15 +101,17 @@ def update_word_status(word_id: str,
 
 
 # "my team got it!" endpoint
-def set_active_word_as_inactive(event, context) -> None:
+def set_active_word_as_inactive(event, context):
     active_words = get_words_with_status(in_bowl=False, is_active=True)
     for item in active_words['Items']:
         update_word_status(item['id'], in_bowl=False, is_active=False)
+    return {"statusCode": 200, "message": "updated these active words to inactive / out of bowl: " + str(active_words)}
 
 
 # "try another" endpoint
-def put_active_word_back_in_bowl(event, context) -> None:
+def put_active_word_back_in_bowl(event, context):
     active_words = get_words_with_status(in_bowl=False, is_active=True)
     for item in active_words['Items']:
         update_word_status(item['id'], in_bowl=True, is_active=False)
+    return {"statusCode": 200, "message": "updated these active words to inactive / in bowl: " + str(active_words)}
 
