@@ -44,7 +44,7 @@ def get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> di
         ':in': in_bowl
     }
     if is_active is not None:
-        filter_expression += ", is_active = :is_active"
+        filter_expression += ", is_active = :is_active"  # fixme NOT GOOD
         expression_attribute_values[':is_active'] = is_active
     return words_table.scan(
         TableName='fishbowl_words',
@@ -79,7 +79,8 @@ def grab_word_from_bowl(event, context):
     # send info about newly removed word to client
     return {"statusCode": 201,
             "body": json.dumps({"word": removed_word,
-                                "word_id": removed_word_id})
+                                "word_id": removed_word_id}),
+            "headers": {"Access-Control-Allow-Origin": "*"}
             }
 
 
