@@ -29,7 +29,7 @@ functions:
     handler: handler.say_hello
     events:
       - http:
-          path: /say_hello_again
+          path: say_hello_again
           method: get
           cors: true
   say_hello:
