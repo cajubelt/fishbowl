@@ -1,5 +1,7 @@
 import json
 import random
+from typing import Optional
+
 import boto3
 import uuid
 
@@ -27,7 +29,7 @@ def add_word(event, context):
     return {'statusCode': 200, 'body': json.dumps({'message': 'added word: ' + new_word, 'input': event})}
 
 
-def put_all_back_in_bowl(event, context):  # fixme this doesnt appear to work
+def put_all_back_in_bowl(event, context):
     out_of_bowl_items = get_words_with_status(in_bowl=False)['Items']
     for item in out_of_bowl_items:
         update_word_status(item['id'], in_bowl=True, active=False)
@@ -36,19 +38,23 @@ def put_all_back_in_bowl(event, context):  # fixme this doesnt appear to work
                                 " out_of_bowl_items: " + str(out_of_bowl_items)})}
 
 
-def get_words_with_status(in_bowl: bool) -> dict:
+def get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> dict:
+    filter_expression = "in_bowl = :in"
+    expression_attribute_values = {
+        ':in': in_bowl
+    }
+    if is_active is not None:
+        filter_expression += ", is_active = :active"
+        expression_attribute_values[':active'] = is_active
     return words_table.scan(
         TableName='fishbowl_words',
-        FilterExpression="in_bowl = :in",
-        ExpressionAttributeValues={
-            ':in': in_bowl
-        }
+        FilterExpression=filter_expression,
+        ExpressionAttributeValues=expression_attribute_values
     )
 
 
 def grab_word_from_bowl(event, context):
-    # should use scan for this to get a bunch of words then choose 1 randomly
-    #   ^ see https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html
+    # choose a word
     words_response = get_words_with_status(in_bowl=True)
     response_items = words_response['Items']
     if len(response_items) == 0:
@@ -57,11 +63,20 @@ def grab_word_from_bowl(event, context):
     random_item = random.choice(response_items)
     removed_word = random_item['word']
     print('removing ' + removed_word + ' from bowl')
-    word_id = random_item['id']
-    update_word_status(word_id, in_bowl=False, active=True)
+    removed_word_id = random_item['id']
+
+    # set other active word to inactive
+    existing_active_words = get_words_with_status(in_bowl=False, is_active=True)  # should be singleton
+    for item in existing_active_words['Items']:
+        update_word_status(item['id'], in_bowl=False, active=False)
+
+    # set newly removed word to active
+    update_word_status(removed_word_id, in_bowl=False, active=True)
+
+    # send info about newly removed word to client
     return {"statusCode": 201,
             "body": json.dumps({"word": removed_word,
-                                "word_id": word_id})
+                                "word_id": removed_word_id})
             }
 
 
