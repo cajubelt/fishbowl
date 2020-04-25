@@ -26,7 +26,7 @@ provider:
 
 functions:
   grab_word_from_bag:
-    handler: handler.grab_word_from_bag
+    handler: handler.grab_word_from_bowl
   add_word:
     handler: handler.add_word
 
@@ -40,6 +40,15 @@ resources:
           -
             AttributeName: id
             AttributeType: S
+          -
+            AttributeName: word
+            AttributeType: S
+          -
+            AttributeName: in_bowl
+            AttributeType: B
+          -
+            AttributeName: is_active
+            AttributeType: B
         KeySchema:
           -
             AttributeName: id
