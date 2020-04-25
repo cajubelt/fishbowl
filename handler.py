@@ -51,7 +51,8 @@ def add_word(event, context):
             'is_active': False
         }
     )
-    return {'statusCode': 200, 'body': json.dumps({'message': 'added word: ' + new_word, 'input': event}),
+    return {'statusCode': 200, 'body': json.dumps({'message': 'added word: ' + new_word, 'input': event,
+                                                   'added_word': new_word}),
             "headers": {"Access-Control-Allow-Origin": "*"}}
 
 
