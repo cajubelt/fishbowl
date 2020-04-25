@@ -13,20 +13,22 @@ words_table = dynamodb.Table('fishbowl_words')
 
 
 def headers_decorator(func):
-    headers = {'headers': {
-        'Access-Control-Allow-Origin': '*',
-        'hi-chris': 'True'
-    }}
-    try:
-        output = func() or {}
-    except Exception as e:
-        output = {
-            'statusCode': 500,
-            'message': e
-        }
-    finally:
-        output.update(headers)
-        return output
+    def func_with_headers(event, context):
+        headers = {'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'hi-chris': 'True'
+        }}
+        try:
+            output = func(event, context) or {}
+        except Exception as e:
+            output = {
+                'statusCode': 500,
+                'message': e
+            }
+        finally:
+            output.update(headers)
+            return output
+    return func_with_headers
 
 
 @headers_decorator
