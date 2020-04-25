@@ -13,10 +13,10 @@ words_table = dynamodb.Table('fishbowl_words')
 
 
 def headers_decorator(func):
-    headers = {
+    headers = {'headers': {
         'Access-Control-Allow-Origin': '*',
         'hi-chris': 'True'
-    }
+    }}
     try:
         output = func() or {}
     except Exception as e:
@@ -49,7 +49,8 @@ def add_word(event, context):
             'is_active': False
         }
     )
-    return {'statusCode': 200, 'body': json.dumps({'message': 'added word: ' + new_word, 'input': event}), "headers": {"Access-Control-Allow-Origin": "*"}}
+    return {'statusCode': 200, 'body': json.dumps({'message': 'added word: ' + new_word, 'input': event}),
+            "headers": {"Access-Control-Allow-Origin": "*"}}
 
 
 @headers_decorator
@@ -59,7 +60,7 @@ def put_all_back_in_bowl(event, context):
         _update_word_status(item['id'], in_bowl=True, is_active=False)
     return {'statusCode': 201,
             "body": json.dumps({"message": str(len(out_of_bowl_items)) + " words put back in bowl." +
-                                " out_of_bowl_items: " + str(out_of_bowl_items)})}
+                                           " out_of_bowl_items: " + str(out_of_bowl_items)})}
 
 
 def _get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> dict:
@@ -138,4 +139,3 @@ def put_active_word_back_in_bowl(event, context):
     for item in active_words['Items']:
         _update_word_status(item['id'], in_bowl=True, is_active=False)
     return {"statusCode": 200, "message": "updated these active words to inactive / in bowl: " + str(active_words)}
-
