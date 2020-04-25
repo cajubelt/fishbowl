@@ -83,7 +83,7 @@ def grab_word_from_bowl(event, context):
     return {"statusCode": 201,
             "body": json.dumps({"word": removed_word,
                                 "word_id": removed_word_id}),
-            "headers": json.dumps({"Access-Control-Allow-Origin": "*"})
+            "headers": {"Access-Control-Allow-Origin": "*"}
             }
 
 
