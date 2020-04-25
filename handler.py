@@ -58,7 +58,7 @@ def get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> di
 
 def grab_word_from_bowl(event, context):
     # error out if another word is is_active
-    existing_active_words = get_words_with_status(in_bowl=False, is_active=True)  # should be singleton
+    existing_active_words = get_words_with_status(in_bowl=False, is_active=True)['Items']  # should be singleton
     if len(existing_active_words) > 0:
         return {'statusCode': 500,
                 'message': 'Another player has an is_active word! ' +
