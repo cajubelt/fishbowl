@@ -26,7 +26,7 @@ def add_word(event, context):
             'is_active': False
         }
     )
-    return {'statusCode': 200, 'body': json.dumps({'message': 'added word: ' + new_word, 'input': event})}
+    return {'statusCode': 200, 'body': json.dumps({'message': 'added word: ' + new_word, 'input': event}), "headers": {"Access-Control-Allow-Origin": "*"}}
 
 
 def put_all_back_in_bowl(event, context):
