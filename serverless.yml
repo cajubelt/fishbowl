@@ -27,6 +27,9 @@ provider:
 functions:
   say_hello:
     handler: handler.say_hello
+    events:
+      - http:
+          cors: true # <-- CORS!
   put_all_back_in_bowl:
     handler: handler.put_all_back_in_bowl
   grab_word_from_bowl:
