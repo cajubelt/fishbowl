@@ -12,9 +12,29 @@ dynamodb = boto3.resource('dynamodb',
 words_table = dynamodb.Table('fishbowl_words')
 
 
+def headers_decorator(func):
+    headers = {
+        'Access-Control-Allow-Origin': '*',
+        'hi-chris': 'True'
+    }
+    try:
+        output = func() or {}
+    except Exception as e:
+        output = {
+            'statusCode': 500,
+            'message': e
+        }
+    finally:
+        output.update(headers)
+        return output
+
+
+@headers_decorator
 def say_hello(event, context):
     return {'statusCode': 200, 'body': json.dumps({'msg': 'hello :)'})}
 
+
+@headers_decorator
 def add_word(event, context):
     print('event type: ' + str(type(event)))
     print(str(event))
@@ -32,16 +52,17 @@ def add_word(event, context):
     return {'statusCode': 200, 'body': json.dumps({'message': 'added word: ' + new_word, 'input': event}), "headers": {"Access-Control-Allow-Origin": "*"}}
 
 
+@headers_decorator
 def put_all_back_in_bowl(event, context):
-    out_of_bowl_items = get_words_with_status(in_bowl=False)['Items']
+    out_of_bowl_items = _get_words_with_status(in_bowl=False)['Items']
     for item in out_of_bowl_items:
-        update_word_status(item['id'], in_bowl=True, is_active=False)
+        _update_word_status(item['id'], in_bowl=True, is_active=False)
     return {'statusCode': 201,
             "body": json.dumps({"message": str(len(out_of_bowl_items)) + " words put back in bowl." +
                                 " out_of_bowl_items: " + str(out_of_bowl_items)})}
 
 
-def get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> dict:
+def _get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> dict:
     filter_expression = "in_bowl = :in"
     expression_attribute_values = {
         ':in': in_bowl
@@ -56,9 +77,10 @@ def get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> di
     )
 
 
+@headers_decorator
 def grab_word_from_bowl(event, context):
     # error out if another word is is_active
-    existing_active_words = get_words_with_status(in_bowl=False, is_active=True)['Items']  # should be singleton
+    existing_active_words = _get_words_with_status(in_bowl=False, is_active=True)['Items']  # should be singleton
     if len(existing_active_words) > 0:
         return {'statusCode': 500,
                 'message': 'Another player has an is_active word! ' +
@@ -66,7 +88,7 @@ def grab_word_from_bowl(event, context):
                            ' or report that their team got it.'}
 
     # choose a word
-    words_response = get_words_with_status(in_bowl=True)
+    words_response = _get_words_with_status(in_bowl=True)
     response_items = words_response['Items']
     if len(response_items) == 0:
         return {'statusCode': 404,
@@ -77,7 +99,7 @@ def grab_word_from_bowl(event, context):
     removed_word_id = random_item['id']
 
     # set newly removed word to is_active
-    update_word_status(removed_word_id, in_bowl=False, is_active=True)
+    _update_word_status(removed_word_id, in_bowl=False, is_active=True)
 
     # send info about newly removed word to client
     return {"statusCode": 201,
@@ -87,9 +109,9 @@ def grab_word_from_bowl(event, context):
             }
 
 
-def update_word_status(word_id: str,
-                       in_bowl: bool,
-                       is_active: bool) -> None:
+def _update_word_status(word_id: str,
+                        in_bowl: bool,
+                        is_active: bool) -> None:
     words_table.update_item(
         Key={'id': word_id},
         UpdateExpression="set in_bowl = :in, is_active = :is_active",
@@ -101,17 +123,19 @@ def update_word_status(word_id: str,
 
 
 # "my team got it!" endpoint
+@headers_decorator
 def set_active_word_as_inactive(event, context):
-    active_words = get_words_with_status(in_bowl=False, is_active=True)
+    active_words = _get_words_with_status(in_bowl=False, is_active=True)
     for item in active_words['Items']:
-        update_word_status(item['id'], in_bowl=False, is_active=False)
+        _update_word_status(item['id'], in_bowl=False, is_active=False)
     return {"statusCode": 200, "message": "updated these active words to inactive / out of bowl: " + str(active_words)}
 
 
 # "try another" endpoint
+@headers_decorator
 def put_active_word_back_in_bowl(event, context):
-    active_words = get_words_with_status(in_bowl=False, is_active=True)
+    active_words = _get_words_with_status(in_bowl=False, is_active=True)
     for item in active_words['Items']:
-        update_word_status(item['id'], in_bowl=True, is_active=False)
+        _update_word_status(item['id'], in_bowl=True, is_active=False)
     return {"statusCode": 200, "message": "updated these active words to inactive / in bowl: " + str(active_words)}
 
