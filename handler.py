@@ -44,7 +44,7 @@ def get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> di
         ':in': in_bowl
     }
     if is_active is not None:
-        filter_expression += ", is_active = :is_active"  # fixme NOT GOOD
+        filter_expression += "AND is_active = :is_active"
         expression_attribute_values[':is_active'] = is_active
     return words_table.scan(
         TableName='fishbowl_words',
@@ -59,8 +59,8 @@ def grab_word_from_bowl(event, context):
     if len(existing_active_words) > 0:
         return {'statusCode': 500,
                 'message': 'Another player has an is_active word! ' +
-                           'Please ask the last player to return their word to the' +
-                           ' bowl or report that their team got it.'}
+                           'Please ask the last player to return their word to the bowl,' +
+                           ' or report that their team got it.'}
 
     # choose a word
     words_response = get_words_with_status(in_bowl=True)
