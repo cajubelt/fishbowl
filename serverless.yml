@@ -31,6 +31,10 @@ functions:
     handler: handler.grab_word_from_bowl
   add_word:
     handler: handler.add_word
+  put_active_word_back_in_bowl:
+    handler: handler.put_active_word_back_in_bowl
+  set_active_word_as_inactive:
+    handler: handler.set_active_word_as_inactive
 
 resources:
   Resources:
