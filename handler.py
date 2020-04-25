@@ -44,7 +44,7 @@ def get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> di
         ':in': in_bowl
     }
     if is_active is not None:
-        filter_expression += "AND is_active = :is_active"
+        filter_expression += " AND is_active = :is_active"
         expression_attribute_values[':is_active'] = is_active
     return words_table.scan(
         TableName='fishbowl_words',
