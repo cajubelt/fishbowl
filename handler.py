@@ -62,8 +62,9 @@ def put_all_back_in_bowl(event, context):
     for item in out_of_bowl_items:
         _update_word_status(item['id'], in_bowl=True, is_active=False)
     return {'statusCode': 201,
-            "body": json.dumps({"message": str(len(out_of_bowl_items)) + " words put back in bowl." +
-                                           " out_of_bowl_items: " + str(out_of_bowl_items)})}
+            "body": json.dumps({"message": str(len(out_of_bowl_items)) + " words put back in bowl.",
+                                "debug_info": " out_of_bowl_items: " + str(out_of_bowl_items)})
+            }
 
 
 def _get_words_with_status(in_bowl: bool, is_active: Optional[bool] = None) -> dict:
